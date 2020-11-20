@@ -30,6 +30,8 @@ module.exports = {
       js: 'never',
       vue: 'never'
     }],
+    quotes: ["error", "double"],
+    "arrow-body-style": ["error", "always"],
     // disallow reassignment of function parameters
     // disallow parameter object manipulation except for specific exclusions
     'no-param-reassign': ['error', {
