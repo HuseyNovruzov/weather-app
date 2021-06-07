@@ -1,13 +1,7 @@
 <template>
-  <div
-    id="app"
-    :class="
-      typeof weather.main != 'undefined' &&
-      Math.round(weather.main.temp - 273.15) > 16
-        ? 'warm'
-        : ''
-    "
-  >
+  <div id="app">
+    <img src="./assets/warm.jpg" alt="" class="land-image" v-if="isWarmTemp()">
+    <img src="./assets/cold.jpg" alt="" class="land-image" v-if="!isWarmTemp()">
     <main>
       <div class="search-box">
         <input
@@ -18,7 +12,7 @@
           @keypress.enter="fetchData"
         />
       </div>
-      <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
+      <div class="weather-wrap" v-if="isUndefined()">
         <div class="location-box">
           <div class="location">
             {{ weather.name }} {{ weather.sys.country }}
@@ -52,6 +46,22 @@ export default {
       fetch(`${this.url_base}/weather?q=${this.query}&appid=${this.api_key}`)
         .then((res) => { return res.json(); })
         .then((res) => { this.weather = res; });
+    },
+    isUndefined() {
+      if (typeof this.weather.main !== "undefined") {
+        return true;
+      }
+      return false;
+    },
+    isWarmTemp() {
+      const valid = this.isUndefined();
+      if (valid) {
+        const greather = Math.round(this.weather.main.temp - 273.15);
+        if (greather > 16) {
+          return true;
+        }
+      }
+      return false;
     },
     buildDate() {
       const d = new Date();
@@ -95,15 +105,16 @@ export default {
   box-sizing: border-box;
 }
 #app {
-  background-image: url("./assets/cold.jpg");
   background-position: bottom;
   background-size: cover;
   transition: 0.4s;
 }
-#app.warm {
-  background-image: url("./assets/warm.jpg");
-  background-size: cover;
-  background-position: bottom;
+.land-image{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  object-fit: cover;
 }
 main {
   min-height: 100vh;
